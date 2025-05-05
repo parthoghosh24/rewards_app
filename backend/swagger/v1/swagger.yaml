@@ -1,0 +1,410 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/redemptions":
+    get:
+      summary: list redemptions
+      tags:
+      - List Redemptions
+      description: List all redemptions in the system for the user
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/redemptions_response"
+    post:
+      summary: redeem points
+      tags:
+      - Redeem points
+      parameters: []
+      description: Redeem user's points
+      security:
+      - Bearer: []
+      responses:
+        '201':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/redeem_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/redeem_params"
+        required: true
+  "/api/v1/rewards":
+    get:
+      summary: list rewards
+      tags:
+      - List Rewards
+      description: List all rewards in the system for the user
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/rewards_response"
+  "/api/v1/user_points":
+    get:
+      summary: return user's points
+      tags:
+      - Get User points
+      description: Fetch user's points
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user_points_response"
+  "/api/v1/signup":
+    post:
+      summary: signup user
+      tags:
+      - User Signup
+      parameters: []
+      description: registers user
+      responses:
+        '201':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/signup_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/signup_params"
+        required: true
+  "/api/v1/login":
+    post:
+      summary: Login user
+      tags:
+      - User Login
+      parameters: []
+      description: Logs in user
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/login_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/login_params"
+        required: true
+  "/api/v1/logout":
+    delete:
+      summary: Logout user
+      tags:
+      - User Logout
+      description: Logs out user
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/logout_response"
+components:
+  securitySchemes:
+    Bearer:
+      description: JWT key necessary to use API calls
+      type: apiKey
+      name: authorization
+      in: header
+  schemas:
+    reward_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        points:
+          type: integer
+      required:
+      - id
+      - title
+      - points
+    rewards_response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/reward_item"
+        meta:
+          type: object
+          description: Optional metadata, currently empty
+          nullable: true
+        message:
+          type: string
+          example: rewards
+      required:
+      - status
+      - data
+      - message
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        jti:
+          type: string
+      required:
+      - id
+      - email
+      - created_at
+      - updated_at
+      - jti
+    user_point:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          "$ref": "#/components/schemas/user"
+        points:
+          type: integer
+      required:
+      - id
+      - user
+      - points
+    user_points_response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          "$ref": "#/components/schemas/user_point"
+        meta:
+          type: object
+          description: Optional metadata, currently empty
+          nullable: true
+        message:
+          type: string
+          example: user points
+      required:
+      - status
+      - data
+      - message
+    login_params:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+              example: foo@example.com
+            password:
+              type: string
+              example: password
+      required:
+      - user
+    login_user:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - email
+    login_response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          "$ref": "#/components/schemas/login_user"
+        meta:
+          type: object
+          description: Optional metadata, currently empty
+          nullable: true
+        message:
+          type: string
+          example: Logged in successfully.
+      required:
+      - status
+      - data
+      - message
+    logout_response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          description: Empty object since there is no additional data on successful
+            logout
+        meta:
+          type: object
+          description: Optional metadata, currently empty
+          nullable: true
+        message:
+          type: string
+          example: Logged out successfully.
+      required:
+      - status
+      - data
+      - message
+    signup_params:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+              example: foo@example.com
+            password:
+              type: string
+              example: password
+      required:
+      - user
+    signup_user:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+      required:
+      - id
+      - email
+    signup_response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          "$ref": "#/components/schemas/signup_user"
+        meta:
+          type: object
+          description: Optional metadata, currently empty
+          nullable: true
+        message:
+          type: string
+          example: Signed up successfully.
+      required:
+      - status
+      - data
+      - message
+    redemption_reward:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        points:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - title
+      - points
+      - created_at
+      - updated_at
+    redemption_item:
+      type: object
+      properties:
+        id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        reward:
+          "$ref": "#/components/schemas/redemption_reward"
+      required:
+      - id
+      - created_at
+      - reward
+    redemptions_response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/redemption_item"
+        meta:
+          type: object
+          description: Optional metadata, currently empty
+          nullable: true
+        message:
+          type: string
+          example: redemptions
+      required:
+      - status
+      - data
+      - message
+    redeem_params:
+      type: object
+      properties:
+        reward_id:
+          type: integer
+          example: 1
+      required:
+      - reward_id
+    redeem_response:
+      type: object
+      properties:
+        data: {}
+        message:
+          type: string
+          example: redemption successful
+      required:
+      - status
+      - data
+      - message
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000/

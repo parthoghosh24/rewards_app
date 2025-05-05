@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    stdin_open: true
+    tty: true
+
+volumes:
+  node_modules:
